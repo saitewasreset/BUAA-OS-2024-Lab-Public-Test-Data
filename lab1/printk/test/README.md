@@ -13,7 +13,7 @@
 
 ### 测试准备
 
-将要测试的`printk`实现（`vprintfmt`函数）放置到`src/print_impl.c`中。
+将要测试的`printk`实现（`vprintfmt`函数）放置到`src/print_impl.c`中（仅需用实现的`vprintfmt`函数**替换**给出的`vprintfmt`函数，**不要修改其他部分**）。
 
 ### 运行
 
