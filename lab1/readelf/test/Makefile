@@ -16,16 +16,22 @@ SOURCE_FILES		:= $(wildcard $(SOURCE_DIR)/*.c)
 TEST_PROGRAM		:= $(TEST_PROGRAM_DIR)/readelf
 TEST_OUTPUTS		:= $(patsubst $(INPUT_DIR)/%,$(TEST_OUTPUT_DIR)/%.out,$(INPUT_FILES))
 
+$(TEST_OUTPUT_DIR):
+	mkdir -p $(TEST_OUTPUT_DIR)
+
+$(TEST_PROGRAM_DIR):
+	mkdir -p $(TEST_PROGRAM_DIR)
+
 $(TEST_PROGRAM): $(SOURCE_FILES)
 	@$(CC) $(CFLAGS) $(INCLUDE) $^ -o $@
 
 $(TEST_OUTPUT_DIR)/%.out: $(INPUT_DIR)/% $(TEST_PROGRAM)
 	@$(TEST_PROGRAM) $< > $@
 
-test: $(INPUT_FILES) $(TEST_OUTPUTS) $(STD_OUTPUTS) check.sh
+test: $(TEST_OUTPUT_DIR) $(TEST_PROGRAM_DIR) $(INPUT_FILES) $(TEST_OUTPUTS) $(STD_OUTPUTS) check.sh
 	@$(SHELL) check.sh $(INPUT_DIR) $(TEST_OUTPUT_DIR) $(STD_OUTPUT_DIR)
 
-compile: $(TEST_PROGRAM)
+compile: $(TEST_PROGRAM_DIR) $(TEST_PROGRAM)
 
 clean:
 	rm -f $(TEST_PROGRAM_DIR)/*

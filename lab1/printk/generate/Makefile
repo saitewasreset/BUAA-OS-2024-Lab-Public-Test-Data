@@ -17,6 +17,15 @@ STD_OUTPUTS				:= $(patsubst $(INPUT_DIR)/%.in,$(STD_OUTPUT_DIR)/%.out,$(INPUT_F
 
 all: $(STD_OUTPUTS)
 
+$(GENERATED_SOURCES_DIR):
+	mkdir -p $(GENERATED_SOURCES_DIR)
+
+$(STD_PROGRAM_DIR):
+	mkdir -p $(STD_PROGRAM_DIR)
+
+$(STD_OUTPUT_DIR):
+	mkdir -p $(STD_OUTPUT_DIR)
+
 $(GENERATED_SOURCES_DIR)/%.c: $(INPUT_DIR)/%.in in_to_c.awk
 	$(AWK) -f in_to_c.awk $< > $@
 
@@ -26,9 +35,9 @@ $(STD_PROGRAM_DIR)/%: $(GENERATED_SOURCES_DIR)/%.c
 $(STD_OUTPUT_DIR)/%.out: $(STD_PROGRAM_DIR)/%
 	$^ < $(patsubst $(STD_PROGRAM_DIR)/%,$(INPUT_DIR)/%.in,$^) > $@
 
-source: $(GENERATED_SOURCES)
-compile: $(STD_PROGRAMS)
-generate: $(STD_OUTPUTS)
+source: $(GENERATED_SOURCES_DIR) $(GENERATED_SOURCES)
+compile: $(STD_PROGRAM_DIR) $(STD_PROGRAMS)
+generate: $(STD_OUTPUT_DIR) $(GENERATED_SOURCES_DIR) $(STD_PROGRAM_DIR) $(STD_OUTPUTS)
 
 clean:
 	rm -f $(GENERATED_SOURCES_DIR)/*

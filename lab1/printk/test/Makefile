@@ -19,6 +19,15 @@ TEST_PROGRAMS			= $(patsubst $(INPUT_DIR)/%.in,$(TEST_PROGRAM_DIR)/%,$(INPUT_FIL
 TEST_OUTPUTS			= $(patsubst $(INPUT_DIR)/%.in,$(TEST_OUTPUT_DIR)/%.out,$(INPUT_FILES))
 STD_OUTPUTS				= $(patsubst $(INPUT_DIR)/%.in,$(STD_OUTPUT_DIR)/%.out,$(INPUT_FILES))
 
+$(GENERATED_SOURCES_DIR):
+	mkdir -p $(GENERATED_SOURCES_DIR)
+
+$(TEST_PROGRAM_DIR):
+	mkdir -p $(TEST_PROGRAM_DIR)
+
+$(TEST_OUTPUT_DIR):
+	mkdir -p $(TEST_OUTPUT_DIR)
+
 $(GENERATED_SOURCES_DIR)/%.c: $(INPUT_DIR)/%.in in_to_c.awk
 	@$(AWK) -f in_to_c.awk $< > $@
 
@@ -29,7 +38,7 @@ $(TEST_OUTPUT_DIR)/%.out: $(TEST_PROGRAM_DIR)/% $(INPUT_DIR)/%.in
 	@echo Running Test $(patsubst $(TEST_PROGRAM_DIR)/%,%,$^)...
 	@$< < $(patsubst $(TEST_PROGRAM_DIR)/%,$(INPUT_DIR)/%.in,$^) > $@
 
-test: $(INPUT_FILES) $(TEST_OUTPUTS) $(STD_OUTPUTS) check.sh
+test: $(GENERATED_SOURCES_DIR) $(TEST_PROGRAM_DIR) $(TEST_OUTPUT_DIR) $(INPUT_FILES) $(TEST_OUTPUTS) $(STD_OUTPUTS) check.sh
 	@$(SHELL) check.sh $(INPUT_DIR) $(TEST_OUTPUT_DIR) $(STD_OUTPUT_DIR)
 
 generate:
@@ -41,8 +50,8 @@ generate:
 	$(MAKE) -C ../generate clean
 
 
-source: $(GENERATED_SOURCES)
-compile: $(TEST_PROGRAMS)
+source: $(GENERATED_SOURCES_DIR) $(GENERATED_SOURCES)
+compile: $(TEST_PROGRAM_DIR) $(TEST_PROGRAMS)
 
 clean:
 	rm -f $(GENERATED_SOURCES_DIR)/*
