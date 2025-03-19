@@ -5,6 +5,10 @@ SHELL					:= bash
 CC						:= gcc
 CFLAGS					:= -Wall -Wextra -g
 
+ifeq ($(ARCH),x86)
+	CFLAGS += -m32
+endif
+
 SOURCE_DIR				:= src
 INPUT_DIR				:= test_data/input
 GENERATED_SOURCES_DIR	:= generated_source
